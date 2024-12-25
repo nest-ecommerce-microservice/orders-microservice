@@ -8,18 +8,18 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @MessagePattern('createOrder')
+  @MessagePattern({ cmd: 'create_order' })
   create(@Payload() createOrderDto: CreateOrderDto) {
     return this.ordersService.create(createOrderDto);
   }
 
-  @MessagePattern('findAllOrders')
+  @MessagePattern({ cmd: 'find_all_orders' })
   findAll() {
     return this.ordersService.findAll();
   }
 
-  @MessagePattern('findOneOrder')
-  findOne(@Payload() id: number) {
+  @MessagePattern({ cmd: 'find_order' })
+  findOne(@Payload('id') id: number) {
     return this.ordersService.findOne(id);
   }
 
