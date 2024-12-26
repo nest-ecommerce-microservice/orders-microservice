@@ -1,11 +1,13 @@
 import {
   Controller,
+  Inject,
   NotImplementedException,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { OrdersService } from './orders.service';
 import { ChangeOrderStatusDto, CreateOrderDto, PaginationDto } from './dto';
+import { PRODUCT_SERVICE } from 'src/config';
 
 @Controller()
 export class OrdersController {
