@@ -12,7 +12,10 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
     this.logger.log('Connected to the database');
   }
   create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+    const order = this.order.create({
+      data: createOrderDto,
+    });
+    return order;
   }
 
   findAll() {
