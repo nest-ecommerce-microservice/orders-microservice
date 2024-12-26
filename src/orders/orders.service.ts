@@ -122,6 +122,15 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
   async findOne(id: string) {
     const order = await this.order.findUnique({
       where: { id },
+      include: {
+        OrderItems: {
+          select: {
+            price: true,
+            quantity: true,
+            productId: true,
+          },
+        },
+      },
     });
     if (!order) {
       throw new RpcException({
@@ -129,7 +138,22 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
         message: `Order #${id} not found`,
       });
     }
-    return order;
+
+    const productsIds = order.OrderItems.map(
+      (orderItem) => orderItem.productId,
+    );
+    const products = await firstValueFrom(
+      this.productsClient.send({ cmd: 'validate_products' }, productsIds),
+    );
+
+    return {
+      ...order,
+      OrderItems: order.OrderItems.map((orderItem) => ({
+        ...orderItem,
+        name: products.find((product) => product.id === orderItem.productId)
+          .name,
+      })),
+    };
   }
 
   async changeOrderStatus(changeOrderStatusDto: ChangeOrderStatusDto) {
